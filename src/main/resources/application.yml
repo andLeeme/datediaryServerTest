@@ -1,0 +1,13 @@
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    clientname: hyunha
+    url: jdbc:mysql://192.168.150.120:3306/nature?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    password: 1234!@#$
+server:
+  servlet:
+    session:
+      setMaxInactiveInterval: 600
+      timeout: 600
+      tracking-modes: cookie
