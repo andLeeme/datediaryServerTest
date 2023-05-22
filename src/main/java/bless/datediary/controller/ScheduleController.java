@@ -3,6 +3,7 @@ package bless.datediary.controller;
 import bless.datediary.database_connection.DBConn;
 import bless.datediary.model.ScheduleRequest;
 import bless.datediary.model.ScheduleResponse;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -147,5 +148,11 @@ public class ScheduleController {
         System.out.println(result3);
 
         return result3;
+    }
+
+    @GetMapping("/hyunha")
+    public String postTest() throws SQLException {
+
+        return "정말 고마워 사랑해";
     }
 }
