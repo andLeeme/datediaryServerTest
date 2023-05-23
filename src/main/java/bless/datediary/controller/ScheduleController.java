@@ -158,11 +158,15 @@ public class ScheduleController {
     }
 
     @PostMapping("/api/MonthlyCalendar")
-    public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, String> _tmp2) throws SQLException {
+    public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, Object> _tmp2) throws SQLException {
         //_tmp2는 couple_index
 
-        String coupleIndex = _tmp2.get(0).toString();
-        String selectedMonth = _tmp2.get(1).toString();
+        System.out.println(_tmp2.get("couple_index"));
+
+        String coupleIndex = _tmp2.get("couple_index").toString();
+        String selectedMonth = _tmp2.get("selected_month").toString();
+
+        System.out.println(coupleIndex);
 
 
         ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();
