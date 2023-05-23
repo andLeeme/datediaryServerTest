@@ -3,6 +3,7 @@ package bless.datediary.controller;
 import bless.datediary.database_connection.DBConn;
 import bless.datediary.model.ScheduleRequest;
 import bless.datediary.model.ScheduleResponse;
+import bless.datediary.model.TitleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -155,4 +156,90 @@ public class ScheduleController {
 
         return "정말 고마워 사랑해";
     }
+
+    @PostMapping("/api/MonthlyCalendar")
+    public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, String> _tmp2) throws SQLException {
+        //_tmp2는 couple_index
+
+        String coupleIndex = _tmp2.get(0).toString();
+        String selectedMonth = _tmp2.get(1).toString();
+
+
+        ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();
+
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+
+        try {
+
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String sql = "select start_year, start_month, start_day, end_year, end_month, end_day, allDayCheck, title from schedule\n" +
+                    "where couple_index = '"+ coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+
+            while(rs.next()) {
+
+                TitleResponse titleResponse = new TitleResponse();
+
+                titleResponse.setStartYear(rs.getString(1).toString());
+                titleResponse.setStartMonth(rs.getString(2).toString());
+                titleResponse.setStartDay(rs.getString(3).toString());
+                titleResponse.setEndYear(rs.getString(4).toString());
+                titleResponse.setEndMonth(rs.getString(5).toString());
+                titleResponse.setEndDay(rs.getString(6).toString());
+                titleResponse.setAllDayCheck((rs.getString(7).toString() == "1") ? "true" : "false");
+                titleResponse.setTitle(rs.getString(8).toString());
+
+                titleList.add(titleResponse);
+            }
+
+//            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
+//
+//            Statement stmt = conn.createStatement();
+//
+//            ResultSet rs = stmt.executeQuery(sql);
+//
+//            if (rs.next()) {
+//                String selectId = rs.getString(1).toString();
+//                if (selectId == null) {
+//                    result = "아이디가 없어요..";
+//                    System.out.println(result);
+//                } else if (selectId.equals(id)) {
+//                    result = id + "님 환영합니다!";
+//                }
+//            } else {
+//                result = "아이디가 없어요..";
+//            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+
+        }
+
+        return titleList;
+    }
+
 }
