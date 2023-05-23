@@ -8,5 +8,4 @@ import lombok.Setter;
 public class TitleRequest {
     String coupleIndex;
     String selectedMonth;
-
 }
