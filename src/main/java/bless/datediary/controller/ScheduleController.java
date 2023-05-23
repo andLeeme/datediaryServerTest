@@ -204,6 +204,7 @@ public class ScheduleController {
 
                 titleList.add(titleResponse);
             }
+            System.out.println(titleList.get(1).getTitle());
 
 //            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
 //
