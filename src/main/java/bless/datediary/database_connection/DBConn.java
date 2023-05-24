@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 public class DBConn {
 
     String ip = "andLeeme.iptime.org";
-    String port = "60722";
+    String port = "3306";
     String DB_name = "datediary";
     String id = "hyunha";
     String pw = "1234!@#$";

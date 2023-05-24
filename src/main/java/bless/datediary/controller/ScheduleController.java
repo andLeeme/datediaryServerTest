@@ -189,23 +189,29 @@ public class ScheduleController {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
+//            if(rs.next()==false) {
+//                System.out.println("셀렉된 게 없다");
+//            } else
+            {
 
-            while(rs.next()) {
+                while (rs.next()) {
 
-                TitleResponse titleResponse = new TitleResponse();
+                    TitleResponse titleResponse = new TitleResponse();
+                    System.out.println(rs.getString(7));
+                    titleResponse.setStartYear(rs.getString(1).toString());
+                    titleResponse.setStartMonth(rs.getString(2).toString());
+                    titleResponse.setStartDay(rs.getString(3).toString());
+                    titleResponse.setEndYear(rs.getString(4).toString());
+                    titleResponse.setEndMonth(rs.getString(5).toString());
+                    titleResponse.setEndDay(rs.getString(6).toString());
+                    titleResponse.setAllDayCheck((rs.getString(7).equals("1")) ? "true" : "false");
+                    titleResponse.setTitle(rs.getString(8).toString());
 
-                titleResponse.setStartYear(rs.getString(1).toString());
-                titleResponse.setStartMonth(rs.getString(2).toString());
-                titleResponse.setStartDay(rs.getString(3).toString());
-                titleResponse.setEndYear(rs.getString(4).toString());
-                titleResponse.setEndMonth(rs.getString(5).toString());
-                titleResponse.setEndDay(rs.getString(6).toString());
-                titleResponse.setAllDayCheck((rs.getString(7).toString() == "1") ? "true" : "false");
-                titleResponse.setTitle(rs.getString(8).toString());
 
-                titleList.add(titleResponse);
+                    titleList.add(titleResponse);
+                }
             }
-            System.out.println(titleList.get(1).getTitle());
+            System.out.println(titleList.get(2).getAllDayCheck());
 
 //            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
 //
