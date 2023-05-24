@@ -167,6 +167,7 @@ public class ScheduleController {
         String selectedMonth = _tmp2.get("selected_month").toString();
 
         System.out.println(coupleIndex);
+        System.out.println(selectedMonth);
 
 
         ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();

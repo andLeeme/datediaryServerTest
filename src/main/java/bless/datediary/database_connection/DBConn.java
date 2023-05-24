@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 @Configuration
 public class DBConn {
-    String ip = "192.168.0.120";
-    String port = "3306";
-//    String DB_name = "nature";
+
+    String ip = "andLeeme.iptime.org";
+    String port = "60722";
     String DB_name = "datediary";
     String id = "hyunha";
     String pw = "1234!@#$";
