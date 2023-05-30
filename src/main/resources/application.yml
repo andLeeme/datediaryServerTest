@@ -5,9 +5,11 @@ spring:
     url: jdbc:mysql://192.168.150.120:3306/nature?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     password: 1234!@#$s
 
-servlet:
-  multipart:
-    location: ${user.dir}/temp
+  servlet:
+    multipart:
+      location: ${user.dir}/temp
+      max-file-size: 100MB
+      max-request-size: 120MB
 
 server:
   servlet:
@@ -18,4 +20,4 @@ server:
 
 upload:
   path: src/main/resources/image
-  maxFileSize: 20971520
+

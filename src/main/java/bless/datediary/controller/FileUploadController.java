@@ -19,8 +19,8 @@ public class FileUploadController {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @Value("${upload.maxFileSize}")
-    private long maxFileSize;
+
+    private long maxFileSize = 100971520;
 
     @PostMapping("/api/image")
     public String handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -47,13 +47,13 @@ public class FileUploadController {
             // 파일 저장
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // 파일 저장 성공시 처리
-            file.getInputStream().close(); // 파일 핸들 닫기
+//
+//            // 파일 저장 성공시 처리
+//            file.getInputStream().close(); // 파일 핸들 닫기
+//
+//            // 임시 파일 삭제
+//            file.transferTo(filePath.toFile());
 
-
-
-            // 임시 파일 삭제
-            file.transferTo(filePath.toFile());
 
             return "redirect:/success";
         } catch (IOException e) {

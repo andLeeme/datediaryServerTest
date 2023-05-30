@@ -18,7 +18,7 @@ public class ScheduleController {
     @PostMapping("/api/main2")
     public ArrayList<ScheduleResponse> Schedule(String a) throws SQLException {
 
-        System.out.println(a);
+        System.out.println("a: "+a);
 
         DBConn DBconn;
         Connection conn = null;
@@ -52,7 +52,7 @@ public class ScheduleController {
         stmt.close();
         conn.close();
 
-        System.out.println(result);
+        System.out.println("result: " + result);
 
         return result;
     }
