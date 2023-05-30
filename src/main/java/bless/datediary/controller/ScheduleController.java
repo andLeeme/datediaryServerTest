@@ -2,7 +2,6 @@ package bless.datediary.controller;
 
 import bless.datediary.database_connection.DBConn;
 import bless.datediary.model.ScheduleRequest;
-import bless.datediary.model.ScheduleResponse;
 import bless.datediary.model.TitleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,108 +14,55 @@ import java.util.HashMap;
 
 @RestController
 public class ScheduleController {
-    @PostMapping("/api/main2")
-    public ArrayList<ScheduleResponse> Schedule(String a) throws SQLException {
+    @PostMapping("/api/scheduleReg")
+    public int ScheduleReg(@RequestBody ScheduleRequest _tmp3) throws SQLException {
 
-        System.out.println("a: "+a);
+        System.out.println("a: " + _tmp3.getCouple_index());
+
+        ScheduleRequest req = new ScheduleRequest();
+
 
         DBConn DBconn;
         Connection conn = null;
         PreparedStatement pstmt = null;
 
-        ArrayList<ScheduleResponse> result = new ArrayList<ScheduleResponse>();
+        int result = 0;
 
-        DBconn = new DBConn();
-        conn = DBconn.connect();
-        String sql = " select * from schedule;";
-        Statement stmt = conn.createStatement();
-        ResultSet rst = stmt.executeQuery(sql);
-        while (rst.next()) {
-            ScheduleResponse schedule = new ScheduleResponse();
-            schedule.setCouple_index(rst.getString(1));
-            schedule.setSchedule_index(rst.getString(2));
-            schedule.setStart_day(rst.getString(3));
-            schedule.setStart_time(rst.getString(4));
-            schedule.setEnd_day(rst.getString(5));
-            schedule.setEnd_time(rst.getString(6));
-            schedule.setAllDayCheck(rst.getString(7));
-            schedule.setTitle(rst.getString(8));
-            schedule.setContents(rst.getString(9));
-            schedule.setPlace_code(rst.getString(10));
-            schedule.setMission_code(rst.getString(11));
-            schedule.setStory_reg(rst.getString(12));
+        String place_code = _tmp3.getPlace_code();
+        String mission_code = _tmp3.getMission_code();
 
-            result.add(schedule);
-        }
-        rst.close();
-        stmt.close();
-        conn.close();
-
-        System.out.println("result: " + result);
-
-        return result;
-    }
-
-
-    @PostMapping("/api/postTest")
-    public ArrayList<HashMap<String,Object>> postTest(@RequestBody HashMap<String, Object> _tmp) throws SQLException {
-
-
-        System.out.println(_tmp.get("id"));
-        System.out.println(_tmp.get("password"));
-
-        ArrayList<ScheduleRequest> postModels = new ArrayList<ScheduleRequest>();
-
-        for (int i = 0; i < _tmp.size(); i++) {
-
-            ScheduleRequest postModel = new ScheduleRequest();
-
-            postModel.setId(_tmp.get("id").toString());
-
-            postModel.setPassword(_tmp.get("password").toString());
-
-            postModels.add(postModel);
-
-            System.out.println(postModels.get(0));
-        }
-
-        DBConn DBconn;
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        String result = "기본값";
 
         try {
-
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String id = postModels.get(0).getId();
-            String password = postModels.get(0).getPassword();
+            String sql = "insert into schedule (couple_index, start_year, start_month, start_day, start_time," +
+                    "end_year, end_month, end_day, end_time, allDayCheck, title, contents,"
+                    + "'"+ place_code+ "'" + ",'" + mission_code + "') values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
-            System.out.println("입력한 아이디 : "+id);
-            System.out.println("입력한 비밀번호 : "+password);
+            pstmt = conn.prepareStatement(sql);
 
-            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
+            pstmt.setString(1, _tmp3.getCouple_index());
+            pstmt.setString(2, _tmp3.getStart_year());
+            pstmt.setString(3, _tmp3.getStart_month());
+            pstmt.setString(4, _tmp3.getStart_day());
+            pstmt.setString(5, _tmp3.getStart_time());
+            pstmt.setString(6, _tmp3.getEnd_year());
+            pstmt.setString(7, _tmp3.getEnd_month());
+            pstmt.setString(8, _tmp3.getEnd_day());
+            pstmt.setString(9, _tmp3.getEnd_time());
+            pstmt.setString(10, _tmp3.getAllDayCheck());
+            pstmt.setString(11, _tmp3.getTitle());
+            pstmt.setString(12, _tmp3.getContents());
+            pstmt.setString(13, _tmp3.getPlace_code());
+            pstmt.setString(14, _tmp3.getMission_code());
 
-            Statement stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery(sql);
-
-            if (rs.next()) {
-                String selectId = rs.getString(1).toString();
-                if (selectId == null) {
-                    result = "아이디가 없어요..";
-                    System.out.println(result);
-                } else if (selectId.equals(id)) {
-                    result = id + "님 환영합니다!";
-                }
-            } else {
-                result = "아이디가 없어요..";
-            }
+            pstmt.executeUpdate();
+            result = 1;
 
         } catch (Exception e) {
             e.printStackTrace();
+            result = 99;
         } finally {
             try {
                 if (pstmt != null) {
@@ -132,24 +78,104 @@ public class ScheduleController {
             } catch (Exception e3) {
                 e3.printStackTrace();
             }
-
         }
-
-        System.out.println("결과값 : " + result);
-
-        HashMap<String,Object> result2 = new HashMap<String,Object>();
-
-        result2.put("result", result);
-        result2.put("status", "서버에서 가져온 데이터입니다");
-
-        ArrayList<HashMap<String,Object>> result3 = new ArrayList<HashMap<String,Object>>();
-
-        result3.add(result2);
-
-        System.out.println(result3);
-
-        return result3;
+        System.out.println("result: " + result);
+        return result;
     }
+
+
+//    @PostMapping("/api/postTest")
+//    public ArrayList<HashMap<String,Object>> postTest(@RequestBody HashMap<String, Object> _tmp) throws SQLException {
+//
+//
+//        System.out.println(_tmp.get("id"));
+//        System.out.println(_tmp.get("password"));
+//
+//        ArrayList<ScheduleRequest> postModels = new ArrayList<ScheduleRequest>();
+//
+//        for (int i = 0; i < _tmp.size(); i++) {
+//
+//            ScheduleRequest postModel = new ScheduleRequest();
+//
+//            postModel.setId(_tmp.get("id").toString());
+//
+//            postModel.setPassword(_tmp.get("password").toString());
+//
+//            postModels.add(postModel);
+//
+//            System.out.println(postModels.get(0));
+//        }
+//
+//        DBConn DBconn;
+//        Connection conn = null;
+//        PreparedStatement pstmt = null;
+//
+//        String result = "기본값";
+//
+//        try {
+//
+//            DBconn = new DBConn();
+//            conn = DBconn.connect();
+//
+//            String id = postModels.get(0).getId();
+//            String password = postModels.get(0).getPassword();
+//
+//            System.out.println("입력한 아이디 : "+id);
+//            System.out.println("입력한 비밀번호 : "+password);
+//
+//            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
+//
+//            Statement stmt = conn.createStatement();
+//
+//            ResultSet rs = stmt.executeQuery(sql);
+//
+//            if (rs.next()) {
+//                String selectId = rs.getString(1).toString();
+//                if (selectId == null) {
+//                    result = "아이디가 없어요..";
+//                    System.out.println(result);
+//                } else if (selectId.equals(id)) {
+//                    result = id + "님 환영합니다!";
+//                }
+//            } else {
+//                result = "아이디가 없어요..";
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (pstmt != null) {
+//                    pstmt.close();
+//                }
+//            } catch (Exception e2) {
+//                e2.printStackTrace();
+//            }
+//            try {
+//                if (conn != null) {
+//                    conn.close();
+//                }
+//            } catch (Exception e3) {
+//                e3.printStackTrace();
+//            }
+//
+//        }
+//
+//        System.out.println("결과값 : " + result);
+//
+//        HashMap<String,Object> result2 = new HashMap<String,Object>();
+//
+//        result2.put("result", result);
+//        result2.put("status", "서버에서 가져온 데이터입니다");
+//
+//        ArrayList<HashMap<String,Object>> result3 = new ArrayList<HashMap<String,Object>>();
+//
+//        result3.add(result2);
+//
+//        System.out.println(result3);
+//
+//        return result3;
+//    }
 
     @GetMapping("/hyunha")
     public String postTest() throws SQLException {
