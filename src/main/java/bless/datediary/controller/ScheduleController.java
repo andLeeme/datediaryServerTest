@@ -1,6 +1,7 @@
 package bless.datediary.controller;
 
 import bless.datediary.database_connection.DBConn;
+import bless.datediary.model.ScheduleEditRequest;
 import bless.datediary.model.ScheduleRequest;
 import bless.datediary.model.TitleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ public class ScheduleController {
 
         int result = 0;
 
-        String place_code = _tmp3.getPlace_code();
-        String mission_code = _tmp3.getMission_code();
+//        String place_code = _tmp3.getPlace_code();
+//        String mission_code = _tmp3.getMission_code();
 
 
         try {
@@ -37,8 +38,7 @@ public class ScheduleController {
             conn = DBconn.connect();
 
             String sql = "insert into schedule (couple_index, start_year, start_month, start_day, start_time," +
-                    "end_year, end_month, end_day, end_time, allDayCheck, title, contents,"
-                    + "'"+ place_code+ "'" + ",'" + mission_code + "') values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                    "end_year, end_month, end_day, end_time, allDayCheck, title, contents, place_code, mission_code) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
             pstmt = conn.prepareStatement(sql);
 
@@ -81,6 +81,72 @@ public class ScheduleController {
         }
         System.out.println("result: " + result);
         return result;
+    }
+
+
+    //스케줄 수정용
+    @PostMapping("/api/scheduleEditReg")
+    public int ScheduleEditReg(@RequestBody ScheduleEditRequest _tmp4) throws SQLException {
+
+        System.out.println("a: " + _tmp4.getSchedule_index());
+
+        ScheduleEditRequest reqEdit = new ScheduleEditRequest();
+
+        String scheduleIndex = _tmp4.getSchedule_index();
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        int resultEdit = 0;
+
+
+        try {
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String sql =  "update schedule set " +
+                    "start_year ='"+_tmp4.getStart_year()+"' " +
+                    "start_month ='"+_tmp4.getStart_month()+"' " +
+                    "start_day ='"+_tmp4.getStart_day()+"' " +
+                    "start_time ='"+_tmp4.getStart_time()+"' " +
+                    "start_year ='"+_tmp4.getEnd_year()+"' " +
+                    "end_year ='"+_tmp4.getEnd_year()+"' " +
+                    "end_month ='"+_tmp4.getEnd_month()+"' " +
+                    "end_day ='"+_tmp4.getEnd_day()+"' " +
+                    "end_time ='"+_tmp4.getEnd_time()+"' " +
+                    "allDayCheck ='"+_tmp4.getAllDayCheck()+"' " +
+                    "title ='"+_tmp4.getTitle()+"' " +
+                    "contents ='"+_tmp4.getContents()+"' " +
+                    "place_code ='"+_tmp4.getPlace_code()+"' " +
+                    "mission_code ='"+_tmp4.getMission_code()+"' " +
+                    "where schedule_index = '"+scheduleIndex+"';";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+            resultEdit = 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultEdit = 99;
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+        }
+        System.out.println("result: " + resultEdit);
+        return resultEdit;
     }
 
 
