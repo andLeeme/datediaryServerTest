@@ -346,4 +346,106 @@ public class ScheduleController {
         return titleList;
     }
 
+
+
+
+    @PostMapping("/api/MonthlyCalendar")
+    public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, Object> _tmp2) throws SQLException {
+        //_tmp2는 couple_index
+
+        System.out.println(_tmp2.get("couple_index"));
+
+        String coupleIndex = _tmp2.get("couple_index").toString();
+        String selectedMonth = _tmp2.get("selected_month").toString();
+
+        System.out.println(coupleIndex);
+        System.out.println(selectedMonth);
+
+
+        ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();
+
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+
+        try {
+
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String sql = "select start_year, start_month, start_day, end_year, end_month, end_day, allDayCheck, title from schedule\n" +
+                    "where couple_index = '"+ coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+//            if(rs.next()==false) {
+//                System.out.println("셀렉된 게 없다");
+//            } else
+            {
+
+                while (rs.next()) {
+
+                    TitleResponse titleResponse = new TitleResponse();
+                    System.out.println(rs.getString(7));
+                    titleResponse.setStartYear(rs.getString(1).toString());
+                    titleResponse.setStartMonth(rs.getString(2).toString());
+                    titleResponse.setStartDay(rs.getString(3).toString());
+                    titleResponse.setEndYear(rs.getString(4).toString());
+                    titleResponse.setEndMonth(rs.getString(5).toString());
+                    titleResponse.setEndDay(rs.getString(6).toString());
+                    titleResponse.setAllDayCheck((rs.getString(7).equals("1")) ? "true" : "false");
+                    titleResponse.setTitle(rs.getString(8).toString());
+
+
+                    titleList.add(titleResponse);
+                }
+            }
+            System.out.println(titleList.get(2).getAllDayCheck());
+
+//            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
+//
+//            Statement stmt = conn.createStatement();
+//
+//            ResultSet rs = stmt.executeQuery(sql);
+//
+//            if (rs.next()) {
+//                String selectId = rs.getString(1).toString();
+//                if (selectId == null) {
+//                    result = "아이디가 없어요..";
+//                    System.out.println(result);
+//                } else if (selectId.equals(id)) {
+//                    result = id + "님 환영합니다!";
+//                }
+//            } else {
+//                result = "아이디가 없어요..";
+//            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+
+        }
+
+        return titleList;
+    }
+
+
+
 }
