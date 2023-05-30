@@ -1,9 +1,7 @@
 package bless.datediary.controller;
 
 import bless.datediary.database_connection.DBConn;
-import bless.datediary.model.ScheduleEditRequest;
-import bless.datediary.model.ScheduleRequest;
-import bless.datediary.model.TitleResponse;
+import bless.datediary.model.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -348,21 +346,14 @@ public class ScheduleController {
 
 
 
-
+    //오늘의 일정 보여주는용
     @PostMapping("/api/MonthlyCalendar")
-    public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, Object> _tmp2) throws SQLException {
-        //_tmp2는 couple_index
+    public ArrayList<ScheduleShowResponse> ScheduleShow(@RequestBody ScheduleShowRequest _tmp5) throws SQLException {
 
-        System.out.println(_tmp2.get("couple_index"));
+        System.out.println("schedule_index:" + _tmp5.getSchedule_index());
+        String scheduleIndex = _tmp5.getSchedule_index();
 
-        String coupleIndex = _tmp2.get("couple_index").toString();
-        String selectedMonth = _tmp2.get("selected_month").toString();
-
-        System.out.println(coupleIndex);
-        System.out.println(selectedMonth);
-
-
-        ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();
+        ArrayList<ScheduleShowResponse> scheduleInfo = new ArrayList<ScheduleShowResponse>();
 
 
         DBConn DBconn;
@@ -375,8 +366,9 @@ public class ScheduleController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String sql = "select start_year, start_month, start_day, end_year, end_month, end_day, allDayCheck, title from schedule\n" +
-                    "where couple_index = '"+ coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
+            String sql = "select couple_index, start_year, start_month, start_day, start_time, end_year, end_month, end_day, end_time, " +
+                    "allDayCheck, title, contents, place_code, mission_code from schedule\n" +
+                    "where schedule_index = '"+ scheduleIndex + "';";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -388,40 +380,27 @@ public class ScheduleController {
 
                 while (rs.next()) {
 
-                    TitleResponse titleResponse = new TitleResponse();
-                    System.out.println(rs.getString(7));
-                    titleResponse.setStartYear(rs.getString(1).toString());
-                    titleResponse.setStartMonth(rs.getString(2).toString());
-                    titleResponse.setStartDay(rs.getString(3).toString());
-                    titleResponse.setEndYear(rs.getString(4).toString());
-                    titleResponse.setEndMonth(rs.getString(5).toString());
-                    titleResponse.setEndDay(rs.getString(6).toString());
-                    titleResponse.setAllDayCheck((rs.getString(7).equals("1")) ? "true" : "false");
-                    titleResponse.setTitle(rs.getString(8).toString());
+                    ScheduleShowResponse scheduleShowResponse = new ScheduleShowResponse();
+
+                    scheduleShowResponse.setCoupleIndex(rs.getString(1).toString());
+                    scheduleShowResponse.setStartYear(rs.getString(2).toString());
+                    scheduleShowResponse.setStartMonth(rs.getString(3).toString());
+                    scheduleShowResponse.setStartDay(rs.getString(4).toString());
+                    scheduleShowResponse.setEndYear(rs.getString(5).toString());
+                    scheduleShowResponse.setEndMonth(rs.getString(6).toString());
+                    scheduleShowResponse.setEndDay(rs.getString(7).toString());
+                    scheduleShowResponse.setEndTime(rs.getString(8).toString());
+                    scheduleShowResponse.setAllDayCheck((rs.getString(9).equals("1")) ? "true" : "false");
+                    scheduleShowResponse.setTitle(rs.getString(10).toString());
+                    scheduleShowResponse.setContents(rs.getString(11).toString());
+                    scheduleShowResponse.setPlaceCode(rs.getString(12).toString());
+                    scheduleShowResponse.setMissionCode(rs.getString(13).toString());
 
 
-                    titleList.add(titleResponse);
+                    scheduleInfo.add(scheduleShowResponse);
                 }
             }
-            System.out.println(titleList.get(2).getAllDayCheck());
-
-//            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
-//
-//            Statement stmt = conn.createStatement();
-//
-//            ResultSet rs = stmt.executeQuery(sql);
-//
-//            if (rs.next()) {
-//                String selectId = rs.getString(1).toString();
-//                if (selectId == null) {
-//                    result = "아이디가 없어요..";
-//                    System.out.println(result);
-//                } else if (selectId.equals(id)) {
-//                    result = id + "님 환영합니다!";
-//                }
-//            } else {
-//                result = "아이디가 없어요..";
-//            }
+            System.out.println("AllDayCheck: " + scheduleInfo.get(0).getAllDayCheck());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -443,7 +422,7 @@ public class ScheduleController {
 
         }
 
-        return titleList;
+        return scheduleInfo;
     }
 
 
