@@ -2,14 +2,13 @@ package bless.datediary.controller;
 
 import bless.datediary.model.upLoad;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @RestController
 public class FileUploadControllerTest {
@@ -18,15 +17,15 @@ public class FileUploadControllerTest {
     private String uploadPath;
 
     @PostMapping("/api/image2")
-    public ArrayList<upLoad> handleFileUpload(String data, @RequestParam("file") MultipartFile file) throws IOException {
+    public ArrayList<upLoad> handleFileUpload(@RequestPart HashMap<String, String> data, @RequestParam("file") MultipartFile file) throws IOException {
 
         // 파일 저장 경로 생성
 
         System.out.println(file.getOriginalFilename());
 
-        System.out.println(data);
+        System.out.println(data.get("couple_index"));
 
-        file.transferTo(new File("C:\\users\\USER\\image\\" + file.getOriginalFilename()));
+        file.transferTo(new File("C:\\users\\USER\\image\\" + "couple_index_"+data.get("couple_index")+".jpg"));
 
         System.out.println(file + "저장 완료");
 

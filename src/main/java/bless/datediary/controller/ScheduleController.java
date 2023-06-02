@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 @RestController
 public class ScheduleController {
+
+    //스케줄 최초 등록
     @PostMapping("/api/scheduleReg")
     public int ScheduleReg(@RequestBody ScheduleRequest _tmp3) throws SQLException {
 
@@ -103,22 +105,22 @@ public class ScheduleController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String sql =  "update schedule set " +
-                    "start_year ='"+_tmp4.getStart_year()+"' " +
-                    "start_month ='"+_tmp4.getStart_month()+"' " +
-                    "start_day ='"+_tmp4.getStart_day()+"' " +
-                    "start_time ='"+_tmp4.getStart_time()+"' " +
-                    "start_year ='"+_tmp4.getEnd_year()+"' " +
-                    "end_year ='"+_tmp4.getEnd_year()+"' " +
-                    "end_month ='"+_tmp4.getEnd_month()+"' " +
-                    "end_day ='"+_tmp4.getEnd_day()+"' " +
-                    "end_time ='"+_tmp4.getEnd_time()+"' " +
-                    "allDayCheck ='"+_tmp4.getAllDayCheck()+"' " +
-                    "title ='"+_tmp4.getTitle()+"' " +
-                    "contents ='"+_tmp4.getContents()+"' " +
-                    "place_code ='"+_tmp4.getPlace_code()+"' " +
-                    "mission_code ='"+_tmp4.getMission_code()+"' " +
-                    "where schedule_index = '"+scheduleIndex+"';";
+            String sql = "update schedule set " +
+                    "start_year ='" + _tmp4.getStart_year() + "' " +
+                    "start_month ='" + _tmp4.getStart_month() + "' " +
+                    "start_day ='" + _tmp4.getStart_day() + "' " +
+                    "start_time ='" + _tmp4.getStart_time() + "' " +
+                    "start_year ='" + _tmp4.getEnd_year() + "' " +
+                    "end_year ='" + _tmp4.getEnd_year() + "' " +
+                    "end_month ='" + _tmp4.getEnd_month() + "' " +
+                    "end_day ='" + _tmp4.getEnd_day() + "' " +
+                    "end_time ='" + _tmp4.getEnd_time() + "' " +
+                    "allDayCheck ='" + _tmp4.getAllDayCheck() + "' " +
+                    "title ='" + _tmp4.getTitle() + "' " +
+                    "contents ='" + _tmp4.getContents() + "' " +
+                    "place_code ='" + _tmp4.getPlace_code() + "' " +
+                    "mission_code ='" + _tmp4.getMission_code() + "' " +
+                    "where schedule_index = '" + scheduleIndex + "';";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.executeUpdate();
@@ -247,17 +249,17 @@ public class ScheduleController {
         return "정말 고마워 사랑해";
     }
 
+    //캘린더에 타이틀만
     @PostMapping("/api/MonthlyCalendar")
     public ArrayList<TitleResponse> MonthlyCalendar(@RequestBody HashMap<String, Object> _tmp2) throws SQLException {
         //_tmp2는 couple_index
 
-        System.out.println(_tmp2.get("couple_index"));
 
         String coupleIndex = _tmp2.get("couple_index").toString();
         String selectedMonth = _tmp2.get("selected_month").toString();
 
-        System.out.println(coupleIndex);
-        System.out.println(selectedMonth);
+        System.out.println("coupleIndex :" + coupleIndex);
+        System.out.println("selectedMonth: " + selectedMonth);
 
 
         ArrayList<TitleResponse> titleList = new ArrayList<TitleResponse>();
@@ -273,8 +275,7 @@ public class ScheduleController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String sql = "select start_year, start_month, start_day, end_year, end_month, end_day, allDayCheck, title from schedule\n" +
-                    "where couple_index = '"+ coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
+            String sql = "select * from schedule where couple_index = '" + coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -282,26 +283,33 @@ public class ScheduleController {
 //            if(rs.next()==false) {
 //                System.out.println("셀렉된 게 없다");
 //            } else
-            {
-
-                while (rs.next()) {
-
-                    TitleResponse titleResponse = new TitleResponse();
-                    System.out.println(rs.getString(7));
-                    titleResponse.setStartYear(rs.getString(1).toString());
-                    titleResponse.setStartMonth(rs.getString(2).toString());
-                    titleResponse.setStartDay(rs.getString(3).toString());
-                    titleResponse.setEndYear(rs.getString(4).toString());
-                    titleResponse.setEndMonth(rs.getString(5).toString());
-                    titleResponse.setEndDay(rs.getString(6).toString());
-                    titleResponse.setAllDayCheck((rs.getString(7).equals("1")) ? "true" : "false");
-                    titleResponse.setTitle(rs.getString(8).toString());
 
 
-                    titleList.add(titleResponse);
-                }
+            while (rs.next()) {
+
+                TitleResponse titleResponse = new TitleResponse();
+
+                titleResponse.setCoupleIndex(rs.getString(1).toString());
+                titleResponse.setScheduleIndex(rs.getString(2).toString());
+                titleResponse.setStartYear(rs.getString(3));
+                titleResponse.setStartMonth(rs.getString(4));
+                titleResponse.setStartDay(rs.getString(5));
+                titleResponse.setStartTime(rs.getString(6));
+                titleResponse.setEndYear(rs.getString(7));
+                titleResponse.setEndMonth(rs.getString(8));
+                titleResponse.setEndDay(rs.getString(9));
+                titleResponse.setEndTime(rs.getString(10));
+                titleResponse.setAllDayCheck((rs.getString(11).equals("1")) ? "true" : "false");
+                titleResponse.setTitle(rs.getString(12).toString());
+                titleResponse.setContents(rs.getString(13));
+                titleResponse.setPlaceCode(rs.getString(14));
+            titleResponse.setMissionCode(rs.getString(15));
+
+
+                titleList.add(titleResponse);
             }
-            System.out.println(titleList.get(2).getAllDayCheck());
+
+            // System.out.println(titleList.get(0).getAllDayCheck());
 
 //            String sql = "select user_id from user where user_id =\"" + id + "\"" + "and user_pw =\"" + password + "\";";
 //
@@ -345,9 +353,8 @@ public class ScheduleController {
     }
 
 
-
-    //오늘의 일정 보여주는용
-    @PostMapping("/api/MonthlyCalendar")
+    //일정수정할 때 보여주는용
+    @PostMapping("/api/scheduleShow")
     public ArrayList<ScheduleShowResponse> ScheduleShow(@RequestBody ScheduleShowRequest _tmp5) throws SQLException {
 
         System.out.println("schedule_index:" + _tmp5.getSchedule_index());
@@ -368,7 +375,7 @@ public class ScheduleController {
 
             String sql = "select couple_index, start_year, start_month, start_day, start_time, end_year, end_month, end_day, end_time, " +
                     "allDayCheck, title, contents, place_code, mission_code from schedule\n" +
-                    "where schedule_index = '"+ scheduleIndex + "';";
+                    "where schedule_index = '" + scheduleIndex + "';";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -382,19 +389,19 @@ public class ScheduleController {
 
                     ScheduleShowResponse scheduleShowResponse = new ScheduleShowResponse();
 
-                    scheduleShowResponse.setCoupleIndex(rs.getString(1).toString());
-                    scheduleShowResponse.setStartYear(rs.getString(2).toString());
-                    scheduleShowResponse.setStartMonth(rs.getString(3).toString());
-                    scheduleShowResponse.setStartDay(rs.getString(4).toString());
-                    scheduleShowResponse.setEndYear(rs.getString(5).toString());
-                    scheduleShowResponse.setEndMonth(rs.getString(6).toString());
-                    scheduleShowResponse.setEndDay(rs.getString(7).toString());
-                    scheduleShowResponse.setEndTime(rs.getString(8).toString());
+                    scheduleShowResponse.setCouple_index(rs.getString(1).toString());
+                    scheduleShowResponse.setStart_year(rs.getString(2).toString());
+                    scheduleShowResponse.setStart_month(rs.getString(3).toString());
+                    scheduleShowResponse.setStart_day(rs.getString(4).toString());
+                    scheduleShowResponse.setEnd_year(rs.getString(5).toString());
+                    scheduleShowResponse.setEnd_month(rs.getString(6).toString());
+                    scheduleShowResponse.setEnd_day(rs.getString(7).toString());
+                    scheduleShowResponse.setEnd_time(rs.getString(8).toString());
                     scheduleShowResponse.setAllDayCheck((rs.getString(9).equals("1")) ? "true" : "false");
                     scheduleShowResponse.setTitle(rs.getString(10).toString());
                     scheduleShowResponse.setContents(rs.getString(11).toString());
-                    scheduleShowResponse.setPlaceCode(rs.getString(12).toString());
-                    scheduleShowResponse.setMissionCode(rs.getString(13).toString());
+                    scheduleShowResponse.setPlace_code(rs.getString(12).toString());
+                    scheduleShowResponse.setMission_code(rs.getString(13).toString());
 
 
                     scheduleInfo.add(scheduleShowResponse);
@@ -424,7 +431,6 @@ public class ScheduleController {
 
         return scheduleInfo;
     }
-
 
 
 }

@@ -8,14 +8,22 @@ import lombok.Setter;
 @Setter
 public class TitleResponse {
 
+    String coupleIndex;
+    String scheduleIndex;
     String startYear;
     String startMonth;
     String startDay;
+    String startTime;
     String endYear;
     String endMonth;
     String endDay;
+    String endTime;
     String allDayCheck;
     String title;
+    String contents;
+    String placeCode;
+    String missionCode;
+
 }
 //public enum E_Schedule
 //{

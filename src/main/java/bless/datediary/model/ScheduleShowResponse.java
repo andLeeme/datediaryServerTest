@@ -8,18 +8,18 @@ import lombok.Setter;
 @Setter
 public class ScheduleShowResponse {
 
-    String coupleIndex;
-    String startYear;
-    String startMonth;
-    String startDay;
-    String startTime;
-    String endYear;
-    String endMonth;
-    String endDay;
-    String endTime;
+    String couple_index;
+    String start_year;
+    String start_month;
+    String start_day;
+    String start_time;
+    String end_year;
+    String end_month;
+    String end_day;
+    String end_time;
     String allDayCheck;
     String title;
     String contents;
-    String placeCode;
-    String missionCode;
+    String place_code;
+    String mission_code;
 }
