@@ -31,21 +31,17 @@ public class SearchEmailController {
             String email = _email;
 
 
-            String sql = "select email from googleemail where email =\"" + email + ";";
+            String sql = "select email from googleemail where email = 'rarara773@gmail.com';";
 
             Statement stmt = conn.createStatement();
 
             ResultSet rs = stmt.executeQuery(sql);
 
-
+            System.out.println(rs.next());
             if (rs.next()) {
-                String selectEmail = rs.getString(1).toString();
-                if (selectEmail == null) {
-                    result = 1;
-
-                } else if (selectEmail.equals(email)) {
-                    result = 0;
-                }
+                result = 0;
+            } else {
+                result = 1;
             }
 
         } catch (Exception e) {
@@ -67,6 +63,8 @@ public class SearchEmailController {
             }
 
         }
+
+        System.out.println(result);
 
         return result;
     }
