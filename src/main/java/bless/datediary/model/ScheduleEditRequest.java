@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ScheduleEditRequest {
+    String couple_index;
     String schedule_index;
     String start_year;
     String start_month;

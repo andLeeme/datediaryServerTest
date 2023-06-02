@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
-public class ScheduleController {
+public class SearchEmailController {
 
     //스케줄 최초 등록
-    @PostMapping("/api/scheduleReg")
+    @PostMapping("/api/SearchEmail")
     public int ScheduleReg(@RequestBody ScheduleRequest _tmp3) throws SQLException {
 
         System.out.println("a: " + _tmp3.getCouple_index());
@@ -306,7 +306,7 @@ public class ScheduleController {
                 titleResponse.setTitle(rs.getString(12).toString());
                 titleResponse.setContents(rs.getString(13));
                 titleResponse.setPlaceCode(rs.getString(14));
-            titleResponse.setMissionCode(rs.getString(15));
+                titleResponse.setMissionCode(rs.getString(15));
 
 
                 titleList.add(titleResponse);
