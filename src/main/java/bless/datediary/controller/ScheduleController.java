@@ -95,7 +95,7 @@ public class ScheduleController {
 
         String scheduleIndex = _tmp4.getSchedule_index();
 
-        String allDayCheck = (_tmp4.getAllDayCheck().equals("true"))? "1" :"0";
+        //String allDayCheck = (_tmp4.getAllDayCheck().equals("true"))? "1" :"0";
 
         DBConn DBconn;
         Connection conn = null;
@@ -118,7 +118,7 @@ public class ScheduleController {
                     "end_month ='" + _tmp4.getEnd_month() + "', " +
                     "end_day ='" + _tmp4.getEnd_day() + "', " +
                     "end_time ='" + _tmp4.getEnd_time() + "', " +
-                    "allDayCheck ='" + allDayCheck + "', " +
+                    "allDayCheck ='" +  _tmp4.getAllDayCheck() + "', " +
                     "title ='" + _tmp4.getTitle() + "', " +
                     "contents ='" + _tmp4.getContents() + "', " +
                     "place_code ='" + _tmp4.getPlace_code() + "', " +
@@ -433,6 +433,57 @@ public class ScheduleController {
         }
 
         return scheduleInfo;
+    }
+
+
+
+
+    //일정 삭제
+    @PostMapping("/api/scheduleDelete")
+    public int scheduleDelete(@RequestBody ScheduleDeleteRequest _tmp6) throws SQLException {
+
+        System.out.println("scheduleIndex: " + _tmp6.getSchedule_index());
+        System.out.println("coupleIndex: " + _tmp6.getCouple_index());
+
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        int resultDelete = 0;
+
+
+        try {
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String sql = "delete from schedule where schedule_index = '" + _tmp6.getSchedule_index() + "';";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+            resultDelete = 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultDelete = 99;
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+        }
+        System.out.println("result: " + resultDelete);
+        return resultDelete;
     }
 
 
