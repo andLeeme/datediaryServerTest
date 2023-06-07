@@ -25,7 +25,9 @@ public class FileUploadControllerTest {
 
         System.out.println(data.get("couple_index"));
 
-        file.transferTo(new File("C:\\users\\USER\\image\\" + "couple_index_"+data.get("couple_index")+".jpg"));
+        //file.transferTo(new File("C:\\users\\USER\\image\\" + "couple_index_"+data.get("couple_index")+".jpg"));
+
+        file.transferTo(new File("C:\\users\\USER\\image\\" + data.get("couple_index")+".jpg"));
 
         System.out.println(file + "저장 완료");
 
