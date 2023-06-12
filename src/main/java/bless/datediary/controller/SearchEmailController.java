@@ -156,6 +156,12 @@ public class SearchEmailController {
 
         String _name = data.get("name");
 
+        String _year = data.get("Year");
+
+        String _month = data.get("Month");
+
+        String _day = data.get("day");
+
         DBConn DBconn;
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -209,6 +215,20 @@ public class SearchEmailController {
 
                 sql = "UPDATE googleemail SET nickname =\"" + _name + "\" WHERE email = \"" + email + "\";";
 
+                pstmt = conn.prepareStatement(sql);
+                pstmt.executeUpdate();
+
+                sql = "UPDATE googleemail SET year =\"" + _year + "\" WHERE email = \"" + email + "\";";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.executeUpdate();
+
+                sql = "UPDATE googleemail SET month =\"" + _month + "\" WHERE email = \"" + email + "\";";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.executeUpdate();
+
+                sql = "UPDATE googleemail SET day =\"" + _day + "\" WHERE email = \"" + email + "\";";
 
                 pstmt = conn.prepareStatement(sql);
                 pstmt.executeUpdate();
@@ -244,7 +264,7 @@ public class SearchEmailController {
     }
 
     @PostMapping("/api/coupleIndex")
-    public int coupleIndex(@RequestBody Object _email) throws SQLException {
+    public HashMap<String, String> coupleIndex(@RequestBody Object _email) throws SQLException {
 
 
         System.out.println(_email);
@@ -253,8 +273,7 @@ public class SearchEmailController {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
-        int result = 0;
-
+        HashMap<String, String> result = new HashMap<>();
         try {
 
             DBconn = new DBConn();
@@ -262,7 +281,10 @@ public class SearchEmailController {
 
             String email = _email.toString();
 
-            String sql = "select coupleindex from googleemail where email ='" + email + "';";
+
+            String sql = "SELECT A.COUPLEINDEX, A.NICKNAME, B.NICKNAME, A.YEAR, A.MONTH, A.DAY FROM GOOGLEEMAIL A JOIN GOOGLEEMAIL B ON A.EMAIL = B.COUPLEEMAIL WHERE a.EMAIL ='" + email + "';";
+
+
 
             Statement stmt = conn.createStatement();
 
@@ -271,7 +293,29 @@ public class SearchEmailController {
 
             if (rs.next()) {
 
-                result = rs.getInt(1);
+                String couple_index = rs.getString(1).toString();
+
+                String nickname = rs.getString(2).toString();
+
+                String nickname2 = rs.getString(3).toString();
+
+                String year = rs.getString(4).toString();
+
+                String month = rs.getString(5).toString();
+
+                String day = rs.getString(6).toString();
+
+                result.put("couple_index", couple_index);
+
+                result.put("nickname1", nickname);
+
+                result.put("nickname2", nickname2);
+
+                result.put("year", year);
+
+                result.put("month", month);
+
+                result.put("day", day);
 
             }
         } catch (Exception e) {
