@@ -88,14 +88,14 @@ public class ScheduleController {
     @PostMapping("/api/scheduleEdit")
     public int ScheduleEditReg(@RequestBody ScheduleEditRequest _tmp4) throws SQLException {
 
-        System.out.println("scheduleIndex: " + _tmp4.getSchedule_index());
-        System.out.println("alldaycheck: " + _tmp4.getAllDayCheck());
+        System.out.println("EditscheduleIndex: " + _tmp4.getSchedule_index());
+        System.out.println("Editalldaycheck: " + _tmp4.getAllDayCheck());
 
         ScheduleEditRequest reqEdit = new ScheduleEditRequest();
 
         String scheduleIndex = _tmp4.getSchedule_index();
 
-        //String allDayCheck = (_tmp4.getAllDayCheck().equals("true"))? "1" :"0";
+        String allDayCheck = (_tmp4.getAllDayCheck().equals("true"))? "1" :"0";
 
         DBConn DBconn;
         Connection conn = null;
@@ -118,7 +118,7 @@ public class ScheduleController {
                     "end_month ='" + _tmp4.getEnd_month() + "', " +
                     "end_day ='" + _tmp4.getEnd_day() + "', " +
                     "end_time ='" + _tmp4.getEnd_time() + "', " +
-                    "allDayCheck ='" +  _tmp4.getAllDayCheck() + "', " +
+                    "allDayCheck ='" + allDayCheck + "', " +
                     "title ='" + _tmp4.getTitle() + "', " +
                     "contents ='" + _tmp4.getContents() + "', " +
                     "place_code ='" + _tmp4.getPlace_code() + "', " +
@@ -278,7 +278,7 @@ public class ScheduleController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String sql = "select * from schedule where couple_index = '" + coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc;";
+            String sql = "select * from schedule where couple_index = '" + coupleIndex + "' and start_month = '" + selectedMonth + "' order by start_day, end_day desc, start_time;";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);

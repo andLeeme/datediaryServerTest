@@ -2,10 +2,16 @@ package bless.datediary.controller;
 
 import bless.datediary.database_connection.DBConn;
 import bless.datediary.model.ScheduleDeleteRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashMap;
 
@@ -47,6 +53,7 @@ public class SearchEmailController {
 
 
                 if (responseCode == null) {
+
                     result = 2;
 
                 } else {
@@ -54,7 +61,14 @@ public class SearchEmailController {
                 }
 
             } else {
+
+
+                sql = "INSERT googleemail (email) VALUES ('"+ email +"');";
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.executeUpdate();
                 result = 1;
+
             }
 
         } catch (Exception e) {
@@ -133,10 +147,14 @@ public class SearchEmailController {
     }
 
     @PostMapping("/api/matchCouple")
-    public int matchCouple(@RequestBody Object _email) throws SQLException {
+    public int matchCouple(@RequestBody HashMap<String, String> data) throws SQLException {
 
 
-        System.out.println(_email);
+        System.out.println(data);
+
+        String _email = data.get("email");
+
+        String _name = data.get("name");
 
         DBConn DBconn;
         Connection conn = null;
@@ -149,7 +167,7 @@ public class SearchEmailController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            int maxIndex= 0;
+            int maxIndex = 0;
 
             String email = _email.toString();
 
@@ -160,7 +178,6 @@ public class SearchEmailController {
             ResultSet rs = stmt.executeQuery(sql);
 
 
-
             if (rs.next()) {
 
                 String responseIndex = rs.getString(2);
@@ -169,11 +186,11 @@ public class SearchEmailController {
 
                     sql = "SELECT MAX(coupleindex) FROM googleemail;";
 
-                     stmt = conn.createStatement();
+                    stmt = conn.createStatement();
 
-                     rs = stmt.executeQuery(sql);
+                    rs = stmt.executeQuery(sql);
 
-                    if(rs.next()) {
+                    if (rs.next()) {
                         maxIndex = rs.getInt(1);
                     }
 
@@ -188,6 +205,15 @@ public class SearchEmailController {
                 }
                 pstmt = conn.prepareStatement(sql);
                 pstmt.executeUpdate();
+
+
+                sql = "UPDATE googleemail SET nickname =\"" + _name + "\" WHERE email = \"" + email + "\";";
+
+
+                pstmt = conn.prepareStatement(sql);
+                pstmt.executeUpdate();
+
+
             } else {
 
                 result = 99;
@@ -215,6 +241,79 @@ public class SearchEmailController {
         System.out.println(result);
 
         return result;
+    }
+
+    @PostMapping("/api/coupleIndex")
+    public int coupleIndex(@RequestBody Object _email) throws SQLException {
+
+
+        System.out.println(_email);
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        try {
+
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String email = _email.toString();
+
+            String sql = "select coupleindex from googleemail where email ='" + email + "';";
+
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery(sql);
+
+
+            if (rs.next()) {
+
+                result = rs.getInt(1);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+
+        }
+
+        return result;
+    }
+
+
+    @GetMapping(value="/mobile/download.do")
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("couple_index") String couple_index) throws IOException {
+        System.out.println("download:"+couple_index);
+
+        Path path = Paths.get("C:/Users/User/image"+couple_index);
+        byte[] data = Files.readAllBytes(path);
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        return ResponseEntity.ok()
+                // Content-Disposition
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + path.getFileName().toString())
+                // Content-Type
+                .contentType(MediaType.parseMediaType("image/jpeg")) //
+                // Content-Lengh
+                .contentLength(data.length) //
+                .body(resource);
     }
 
 

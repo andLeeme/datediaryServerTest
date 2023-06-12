@@ -1,12 +1,23 @@
 package bless.datediary.controller;
 
 import bless.datediary.model.upLoad;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,7 +38,7 @@ public class FileUploadControllerTest {
 
         //file.transferTo(new File("C:\\users\\USER\\image\\" + "couple_index_"+data.get("couple_index")+".jpg"));
 
-        file.transferTo(new File("C:\\users\\USER\\image\\" + data.get("couple_index")+".jpg"));
+        file.transferTo(new File("C:\\users\\USER\\image\\" + data.get("couple_index") + ".jpg"));
 
         System.out.println(file + "저장 완료");
 
@@ -39,9 +50,18 @@ public class FileUploadControllerTest {
 
         upLoad.add(uLoad);
 
-
         return upLoad;
 
+    }
+
+    @GetMapping(value = "/getTest", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> userSearch() throws IOException {
+
+        //커플인덱스로 변경 필요
+        InputStream imageStream = new FileInputStream("C:/Users/USER/image/1.jpg");
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+        return new ResponseEntity<byte[]>(imageByteArray, HttpStatus.OK);
     }
 }
 
