@@ -3,10 +3,13 @@ package bless.datediary.model;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
-public class ChatRequestBody {
-    String couple_index;
-    String email;
-    String sender;
+public class Static3Response {
+
+    String year;
+    String month;
+    String count;
+
 }

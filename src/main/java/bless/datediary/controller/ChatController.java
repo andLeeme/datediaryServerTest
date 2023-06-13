@@ -23,20 +23,12 @@ import java.util.HashMap;
 public class ChatController {
 
 
-    @PostMapping("/api/chat")
+    @PostMapping("/api/notice")
     public ArrayList<ChatResponseBody> Chat(@RequestBody ChatRequestBody chatRequestBody) throws SQLException {
 
         String coupleIndex = chatRequestBody.getCouple_index();
         String email = chatRequestBody.getEmail();
         String sender = chatRequestBody.getSender();
-        String message = chatRequestBody.getMessage();
-        String timestamp = chatRequestBody.getTimestamp();
-
-        System.out.println(coupleIndex);
-        System.out.println(email);
-        System.out.println(sender);
-        System.out.println(message);
-        System.out.println(timestamp);
 
         ArrayList<ChatResponseBody> ab = new ArrayList<>();
 
@@ -49,20 +41,20 @@ public class ChatController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
+//
+//            String sql = "insert chat (couple_index, email, sender, message, timestamp2) values (?,?,?,?,?);";
+//
+//            pstmt = conn.prepareStatement(sql);
+//
+//            pstmt.setString(1, coupleIndex);
+//            pstmt.setString(2, email);
+//            pstmt.setString(3, sender);
+//            pstmt.setString(4, message);
+//            pstmt.setString(5, timestamp);
+//
+//            pstmt.executeUpdate();
 
-            String sql = "insert chat (couple_index, email, sender, message, timestamp2) values (?,?,?,?,?);";
-
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, coupleIndex);
-            pstmt.setString(2, email);
-            pstmt.setString(3, sender);
-            pstmt.setString(4, message);
-            pstmt.setString(5, timestamp);
-
-            pstmt.executeUpdate();
-
-            sql = "select * from chat where couple_index = '" + coupleIndex + "'limit 100;";
+            String sql = "select * from notice where couple_index = '" + coupleIndex + "'limit 100;";
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -71,11 +63,12 @@ public class ChatController {
 
                 ChatResponseBody chatResponseBody = new ChatResponseBody();
 
-                chatResponseBody.setCouple_index(rs.getString(1).toString());
-                chatResponseBody.setEmail(rs.getString(2).toString());
-                chatResponseBody.setSender(rs.getString(3));
-                chatResponseBody.setMessage(rs.getString(4));
-                chatResponseBody.setTimestamp(rs.getString(5));
+                chatResponseBody.setCouple_index(rs.getString(2).toString());
+                chatResponseBody.setTimestamp2(rs.getString(3).toString());
+                chatResponseBody.setName2(rs.getString(4).toString());
+                chatResponseBody.setType2(rs.getString(5).toString());
+                chatResponseBody.setMonth(rs.getString(6).toString());
+                chatResponseBody.setDay(rs.getString(7).toString());
 
                 ab.add(chatResponseBody);
             }

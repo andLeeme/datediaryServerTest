@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatRequestBody {
+public class Static3Request {
     String couple_index;
-    String email;
-    String sender;
+    String start_month;
+    String start_year;
 }

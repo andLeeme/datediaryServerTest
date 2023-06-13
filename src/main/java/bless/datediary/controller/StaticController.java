@@ -1,9 +1,7 @@
 package bless.datediary.controller;
 
 import bless.datediary.database_connection.DBConn;
-import bless.datediary.model.Static2Response;
-import bless.datediary.model.StaticRequest;
-import bless.datediary.model.StaticResponse;
+import bless.datediary.model.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -309,6 +307,89 @@ public class StaticController {
     }
 
 
+
+    @PostMapping("/api/static3")
+    public ArrayList<Static3Response> static3(@RequestBody Static3Request _tmp) throws SQLException {
+
+
+
+        String coupleIndex = _tmp.getCouple_index().toString();
+        String thisMonth = _tmp.getStart_month().toString();
+        String thisYear = _tmp.getStart_year().toString();
+        System.out.println("static3_coupleIndex : " + coupleIndex);
+
+        ArrayList<Static3Response> resultCount3 = new ArrayList<>();
+
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        int result = 99;
+
+        try {
+
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+
+
+            //미션 횟수
+            String sql ="select start_year, start_month, count(mission_code) from schedule where couple_index = '" + coupleIndex +
+                            "'  group by start_year, start_month order by start_month;";
+
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+
+            while(rs.next()) {
+                Static3Response static3 = new Static3Response();
+
+                static3.setYear(rs.getString(1));
+                static3.setMonth(rs.getString(2));
+                static3.setCount(rs.getString(3));
+
+                result = 123;
+                if(rs.getString(1) != null) {
+
+                    resultCount3.add(static3);
+                    result = 123123;
+                } else {
+                    System.out.println("mission의 조회 결과 없음");
+                    result = 123123123;
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+
+        }
+        System.out.println(result);
+        System.out.println("mission: " + resultCount3.get(0).getYear()+ "/" + resultCount3.get(0).getMonth() + "/" + resultCount3.get(0).getCount());
+//        System.out.println("0번: " + resultCount2.get(0).getPlaceCode() + ", " + resultCount2.get(0).getCount());
+//        System.out.println("1번: " + resultCount2.get(1).getPlaceCode() + ", " + resultCount2.get(1).getCount());
+//        System.out.println("2번: " + resultCount2.get(2).getPlaceCode() + ", " + resultCount2.get(2).getCount());
+//        System.out.println("3번: " + resultCount2.get(3).getPlaceCode() + ", " + resultCount2.get(3).getCount());
+
+        return resultCount3;
+    }
 
 
 

@@ -1,5 +1,6 @@
 package bless.datediary.controller;
 
+import bless.datediary.database_connection.DBConn;
 import bless.datediary.model.upLoad;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,6 +52,48 @@ public class FileUploadControllerTest {
         uLoad.setTest("이미지 저장 후 리턴했습니다.");
 
         upLoad.add(uLoad);
+
+
+        DBConn DBconn;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+
+        try {
+            DBconn = new DBConn();
+            conn = DBconn.connect();
+
+            String sql = "insert notice (couple_index, timestamp2, name2, type2, month, day) values (?,?,?,?,?,?);";
+
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, data.get("couple_index"));
+            pstmt.setString(2, data.get("timestamp2"));
+            pstmt.setString(3, data.get("name2"));
+            pstmt.setString(4, "2");
+            pstmt.setString(5, "13");
+            pstmt.setString(6, "32");
+
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e3) {
+                e3.printStackTrace();
+            }
+        }
 
         return upLoad;
 

@@ -29,10 +29,6 @@ public class ScheduleController {
 
         int result = 0;
 
-//        String place_code = _tmp3.getPlace_code();
-//        String mission_code = _tmp3.getMission_code();
-
-
         try {
             DBconn = new DBConn();
             conn = DBconn.connect();
@@ -58,6 +54,23 @@ public class ScheduleController {
             pstmt.setString(14, _tmp3.getMission_code());
 
             pstmt.executeUpdate();
+
+
+            sql = "insert notice (couple_index, timestamp2, name2, type2, month, day) values (?,?,?,?,?,?);";
+
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, _tmp3.getCouple_index());
+            pstmt.setString(2, _tmp3.getTimestamp2());
+            pstmt.setString(3, _tmp3.getName());
+            pstmt.setString(4, "0");
+            pstmt.setString(5, _tmp3.getStart_month());
+            pstmt.setString(6, _tmp3.getStart_day());
+
+
+            pstmt.executeUpdate();
+
+
             result = 1;
 
         } catch (Exception e) {
@@ -127,6 +140,23 @@ public class ScheduleController {
 
             pstmt = conn.prepareStatement(sql);
             pstmt.executeUpdate();
+
+
+            sql = "insert notice (couple_index, timestamp2, name2, type2, month, day) values (?,?,?,?,?,?);";
+
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, _tmp4.getCouple_index());
+            pstmt.setString(2, _tmp4.getTimestamp2());
+            pstmt.setString(3, _tmp4.getName());
+            pstmt.setString(4, "1");
+            pstmt.setString(5, _tmp4.getStart_month());
+            pstmt.setString(6, _tmp4.getStart_day());
+
+
+            pstmt.executeUpdate();
+
+
             resultEdit = 1;
 
         } catch (Exception e) {

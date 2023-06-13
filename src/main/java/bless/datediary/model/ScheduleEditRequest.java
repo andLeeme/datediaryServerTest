@@ -21,4 +21,6 @@ public class ScheduleEditRequest {
     String contents;
     String place_code;
     String mission_code;
+    String name;
+    String timestamp2;
 }

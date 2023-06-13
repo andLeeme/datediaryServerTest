@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatRequestBody {
-    String couple_index;
-    String email;
-    String sender;
+public class NicknameChangeRequest {
+    String user_email;
+    String edited_nickname;
+
 }

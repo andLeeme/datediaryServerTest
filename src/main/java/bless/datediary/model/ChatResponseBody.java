@@ -7,8 +7,9 @@ import lombok.Setter;
 @Setter
 public class ChatResponseBody {
     String couple_index;
-    String email;
-    String sender;
-    String message;
-    String timestamp;
+    String timestamp2;
+    String name2;
+    String type2;
+    String month;
+    String day;
 }
