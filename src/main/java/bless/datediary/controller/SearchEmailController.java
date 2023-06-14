@@ -63,7 +63,7 @@ public class SearchEmailController {
             } else {
 
 
-                sql = "INSERT googleemail (email) VALUES ('"+ email +"');";
+                sql = "INSERT googleemail (email) VALUES ('" + email + "');";
 
                 pstmt = conn.prepareStatement(sql);
                 pstmt.executeUpdate();
@@ -101,12 +101,13 @@ public class SearchEmailController {
 
         System.out.println(_tmp.get("email"));
 
-
         System.out.println(_tmp.get("coupleEmail"));
 
         String email = _tmp.get("email").toString();
 
         String coupleEmail = _tmp.get("coupleEmail").toString().trim();
+
+        System.out.println(coupleEmail);
 
         DBConn DBconn;
         Connection conn = null;
@@ -119,11 +120,31 @@ public class SearchEmailController {
             DBconn = new DBConn();
             conn = DBconn.connect();
 
-            String sql = "UPDATE googleemail SET coupleemail =\"" + coupleEmail + "\" WHERE email = \"" + email + "\";";
+            String sql = "select count(coupleemail) from googleemail where coupleemail = '" + coupleEmail + "';";
 
-            pstmt = conn.prepareStatement(sql);
-            pstmt.executeUpdate();
-            result = 0;
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery(sql);
+
+
+            if (rs.next()) {
+
+                String count = rs.getString(1).toString();
+
+                if (!count.equals("0")) {
+
+                    result = -1;
+
+
+                } else {
+
+                    sql = "UPDATE googleemail SET coupleemail =\"" + coupleEmail + "\" WHERE email = \"" + email + "\";";
+
+                    pstmt = conn.prepareStatement(sql);
+                    pstmt.executeUpdate();
+                    result = 0;
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,6 +164,7 @@ public class SearchEmailController {
                 e3.printStackTrace();
             }
         }
+        System.out.println(result);
         return result;
     }
 
@@ -172,6 +194,7 @@ public class SearchEmailController {
 
             DBconn = new DBConn();
             conn = DBconn.connect();
+
 
             int maxIndex = 0;
 
@@ -285,7 +308,6 @@ public class SearchEmailController {
             String sql = "SELECT A.COUPLEINDEX, A.NICKNAME, B.NICKNAME, A.YEAR, A.MONTH, A.DAY FROM GOOGLEEMAIL A JOIN GOOGLEEMAIL B ON A.EMAIL = B.COUPLEEMAIL WHERE a.EMAIL ='" + email + "';";
 
 
-
             Statement stmt = conn.createStatement();
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -342,11 +364,12 @@ public class SearchEmailController {
     }
 
 
-    @GetMapping(value="/mobile/download.do")
-    public ResponseEntity<ByteArrayResource> download(@RequestParam("couple_index") String couple_index) throws IOException {
-        System.out.println("download:"+couple_index);
+    @GetMapping(value = "/mobile/download.do")
+    public ResponseEntity<ByteArrayResource> download(@RequestParam("couple_index") String couple_index) throws
+            IOException {
+        System.out.println("download:" + couple_index);
 
-        Path path = Paths.get("C:/Users/User/image"+couple_index);
+        Path path = Paths.get("C:/Users/User/image" + couple_index);
         byte[] data = Files.readAllBytes(path);
         ByteArrayResource resource = new ByteArrayResource(data);
 

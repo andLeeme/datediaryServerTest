@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,11 +100,14 @@ public class FileUploadControllerTest {
 
     }
 
-    @GetMapping(value = "/getTest", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> userSearch() throws IOException {
+
+    @GetMapping(value = "/getImageFrom/{coupleIndex}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> userSearch(@PathVariable("coupleIndex") String coupleIndex, Model model) throws IOException {
+
+        model.addAttribute("coupleIndex", coupleIndex);
 
         //커플인덱스로 변경 필요
-        InputStream imageStream = new FileInputStream("C:/Users/USER/image/1.jpg");
+        InputStream imageStream = new FileInputStream("C:/Users/USER/image/" + coupleIndex + ".jpg");
         byte[] imageByteArray = IOUtils.toByteArray(imageStream);
         imageStream.close();
         return new ResponseEntity<byte[]>(imageByteArray, HttpStatus.OK);
